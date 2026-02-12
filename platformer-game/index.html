@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Platformer Game</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/player.css">
+    <link rel="stylesheet" href="css/platforms.css">
+    <link rel="stylesheet" href="css/enemies.css">
+    <link rel="stylesheet" href="css/flagpole.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <h1 class="site-title">Minigame Page</h1>
+            <nav class="nav">
+                <a href="../index.html">Home</a>
+                <a href="#skills">Portfolio</a>
+                <a href="#projects">Projects</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+    <div id="gameContainer"></div>
+    <div id="uiContainer">
+        <div id="levelText">Level 1</div>
+        <div>Controls: A/D to move, SPACE to jump</div>
+    </div>
+
+    <!-- Scripts in order of dependency -->
+    <script src="js/constants.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/platform.js"></script>
+    <script src="js/enemies/goomba.js"></script>
+    <script src="js/enemies/patrol.js"></script>
+    <script src="js/flagpole.js"></script>
+    <script src="js/level.js"></script>
+    <script src="js/levels/level1.js"></script>
+    <script src="js/levels/level2.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

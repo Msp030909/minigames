@@ -1,0 +1,18 @@
+.flagpole {
+    position: absolute;
+    width: 16px;
+    height: 80px;
+    background: linear-gradient(90deg, #DAA520 0%, #B8860B 100%);
+    /* Sprite: background-image: url('flagpole.png'); */
+}
+
+.flag {
+    position: absolute;
+    width: 32px;
+    height: 24px;
+    background-color: #FF1493;
+    border-radius: 4px;
+    top: -20px;
+    right: -20px;
+    /* Sprite: background-image: url('flag.png'); */
+}

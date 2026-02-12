@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Mouse Maze</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<header class="site-header">
+			<div class="container header-inner">
+				<h1 class="site-title">Minigame Page</h1>
+				<nav class="nav">
+					<a href="../index.html">Home</a>
+					<a href="#skills">Portfolio</a>
+					<a href="#projects">Projects</a>
+					<a href="#contact">Contact</a>
+				</nav>
+			</div>
+		</header>
+		<main class="page">
+			<header class="hud">
+				<div class="title">Mouse Maze</div>
+				<div id="levelName" class="level-name">Level 1</div>
+				<div class="hint">Start at green, reach orange. Touch a wall to lose.</div>
+			</header>
+
+			<section class="stage">
+				<div id="maze" class="maze" aria-label="Maze play area">
+					<div id="start" class="start">START</div>
+					<div id="finish" class="finish">FINISH</div>
+				</div>
+				<div id="message" class="message" aria-live="polite"></div>
+			</section>
+		</main>
+
+		<script src="level1.js"></script>
+		<script src="level2.js"></script>
+		<script src="level3.js"></script>
+		<script src="level4.js"></script>
+		<script src="level5.js"></script>
+		<script src="main.js"></script>
+	</body>
+</html>

@@ -1,0 +1,12 @@
+.player {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    background-color: #FF6B6B;
+    border-radius: 4px;
+    /* Sprite states (uncomment to use sprites instead):
+       background-image: url('player-idle.png');
+       background-size: contain;
+       background-repeat: no-repeat;
+    */
+}

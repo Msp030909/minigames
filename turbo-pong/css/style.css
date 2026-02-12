@@ -1,0 +1,278 @@
+/* ==============================================
+ *  TURBO PONG — Stylesheet
+ * ============================================== */
+
+/* ── Reset ──────────────────────────────────── */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ── Navbar styles ─────────────────────────── */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 28px 20px;
+}
+
+.site-header {
+    backdrop-filter: blur(6px);
+    background: #252525;
+    border-bottom: 1px solid rgba(16, 24, 40, 0.04);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+    color: #e9f7eb;
+    font-family: monospace, ui-monospace, SF Mono, Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.site-title {
+    font-size: 18px;
+    margin: 0;
+    font-weight: 600;
+}
+
+.nav a {
+    color: #8d8d8d;
+    text-decoration: none;
+    margin-left: 18px;
+    font-weight: 500;
+}
+
+.nav a:hover {
+    color: #e9f7eb;
+}
+
+/* ── Base ───────────────────────────────────── */
+body {
+    background: #0a0a0a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #fff;
+    overflow: hidden;
+}
+
+/* ── Game wrapper (positions overlays above the canvas) ── */
+#game-wrapper {
+    position: relative;
+    width: 900px;
+    height: 600px;
+}
+
+#game-canvas {
+    display: block;
+    background: #111;
+    border: 2px solid #222;
+    border-radius: 4px;
+}
+
+/* ── Generic hidden helper ──────────────────── */
+.hidden {
+    display: none !important;
+}
+
+/* ── Overlay (shared by all menus) ──────────── */
+.overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.88);
+    z-index: 10;
+}
+
+/* ── Title screen ───────────────────────────── */
+.game-title {
+    font-size: 62px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    margin-bottom: 6px;
+    background: linear-gradient(135deg, #00ff88, #00ccff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.game-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 36px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+/* ── Buttons ────────────────────────────────── */
+.menu-btn {
+    display: block;
+    width: 260px;
+    padding: 14px 0;
+    margin: 8px 0;
+    font-size: 17px;
+    font-weight: 700;
+    border: 2px solid #00ff88;
+    background: transparent;
+    color: #00ff88;
+    cursor: pointer;
+    border-radius: 6px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: background 0.2s, color 0.2s;
+}
+
+.menu-btn:hover:not(:disabled) {
+    background: #00ff88;
+    color: #0a0a0a;
+}
+
+.menu-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.menu-btn.secondary {
+    border-color: #ff0066;
+    color: #ff0066;
+}
+
+.menu-btn.secondary:hover {
+    background: #ff0066;
+    color: #fff;
+}
+
+/* ── Controls selection ─────────────────────── */
+.controls-section {
+    text-align: center;
+    margin: 14px 0;
+}
+
+.controls-section h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #00ccff;
+    letter-spacing: 2px;
+}
+
+.control-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.control-btn {
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 2px solid #444;
+    background: transparent;
+    color: #aaa;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    min-width: 100px;
+}
+
+.control-btn:hover {
+    border-color: #00ff88;
+    color: #00ff88;
+}
+
+.control-btn.selected {
+    border-color: #00ff88;
+    background: rgba(0, 255, 136, 0.12);
+    color: #00ff88;
+}
+
+/* ── Chaos mode toggle ──────────────────────── */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-label {
+    font-size: 14px;
+    color: #ff0066;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.toggle-switch {
+    width: 48px;
+    height: 26px;
+    background: #2a2a2a;
+    border-radius: 13px;
+    position: relative;
+    transition: background 0.3s;
+    border: 2px solid #444;
+}
+
+.toggle-switch.active {
+    background: rgba(255, 0, 102, 0.35);
+    border-color: #ff0066;
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: #777;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: left 0.25s, background 0.25s;
+}
+
+.toggle-switch.active::after {
+    left: 24px;
+    background: #ff0066;
+}
+
+/* ── Game over ──────────────────────────────── */
+.game-over-title {
+    font-size: 48px;
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+
+.winner-text {
+    color: #00ff88;
+}
+
+.game-over-score {
+    font-size: 24px;
+    color: #888;
+    margin-bottom: 32px;
+    font-family: 'Courier New', monospace;
+}
+
+/* ── Pause overlay ──────────────────────────── */
+#pause-overlay h2 {
+    font-size: 48px;
+    letter-spacing: 6px;
+}
+
+#pause-overlay p {
+    color: #888;
+    margin-top: 16px;
+}

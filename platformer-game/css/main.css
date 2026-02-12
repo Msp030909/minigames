@@ -1,0 +1,83 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Navbar styles */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 28px 20px;
+}
+
+.site-header {
+    backdrop-filter: blur(6px);
+    background: #252525;
+    border-bottom: 1px solid rgba(16, 24, 40, 0.04);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+    color: #e9f7eb;
+    font-family: monospace, ui-monospace, SF Mono, Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.site-title {
+    font-size: 18px;
+    margin: 0;
+    font-weight: 600;
+}
+
+.nav a {
+    color: #8d8d8d;
+    text-decoration: none;
+    margin-left: 18px;
+    font-weight: 500;
+}
+
+.nav a:hover {
+    color: #e9f7eb;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #1a1a1a;
+    font-family: Arial, sans-serif;
+}
+
+#gameContainer {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
+    border: 3px solid #333;
+    overflow: hidden;
+}
+
+#uiContainer {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: #333;
+    font-size: 16px;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+#levelText {
+    margin-bottom: 5px;
+    font-weight: bold;
+}

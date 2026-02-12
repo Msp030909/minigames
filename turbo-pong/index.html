@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turbo Pong</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <h1 class="site-title">Minigame Page</h1>
+            <nav class="nav">
+                <a href="../index.html">Home</a>
+                <a href="#skills">Portfolio</a>
+                <a href="#projects">Projects</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+    <div id="game-wrapper">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- ══════════ Title Menu ══════════ -->
+        <div id="title-menu" class="overlay">
+            <h1 class="game-title">TURBO PONG</h1>
+            <p class="game-subtitle">A game of reflexes &amp; chaos</p>
+            <button id="btn-1player" class="menu-btn">1 Player</button>
+            <button id="btn-2player" class="menu-btn">2 Players</button>
+            <div class="toggle-container" id="chaos-toggle">
+                <span class="toggle-label">Chaos Mode</span>
+                <div class="toggle-switch" id="chaos-switch"></div>
+            </div>
+        </div>
+
+        <!-- ══════════ Controls Menu ══════════ -->
+        <div id="controls-menu" class="overlay hidden">
+            <h2 style="margin-bottom:28px;letter-spacing:3px;font-size:26px;">SELECT CONTROLS</h2>
+
+            <div id="p1-controls" class="controls-section">
+                <h3>Player 1 (Left)</h3>
+                <div class="control-options">
+                    <button class="control-btn" data-player="1" data-control="wasd">W / S</button>
+                    <button class="control-btn" data-player="1" data-control="arrows">&#x2191; / &#x2193;</button>
+                    <button class="control-btn" data-player="1" data-control="mouse">Mouse</button>
+                </div>
+            </div>
+
+            <div id="p2-controls" class="controls-section hidden">
+                <h3>Player 2 (Right)</h3>
+                <div class="control-options">
+                    <button class="control-btn" data-player="2" data-control="wasd">W / S</button>
+                    <button class="control-btn" data-player="2" data-control="arrows">&#x2191; / &#x2193;</button>
+                    <button class="control-btn" data-player="2" data-control="mouse">Mouse</button>
+                </div>
+            </div>
+
+            <button id="btn-start" class="menu-btn" style="margin-top:28px;" disabled>START GAME</button>
+            <button id="btn-back" class="menu-btn secondary">BACK</button>
+        </div>
+
+        <!-- ══════════ Pause ══════════ -->
+        <div id="pause-overlay" class="overlay hidden">
+            <h2>PAUSED</h2>
+            <p>Press ESC to resume</p>
+        </div>
+
+        <!-- ══════════ Game Over ══════════ -->
+        <div id="gameover-menu" class="overlay hidden">
+            <h2 class="game-over-title" id="winner-text"></h2>
+            <p class="game-over-score" id="final-score"></p>
+            <button id="btn-playagain" class="menu-btn">PLAY AGAIN</button>
+            <button id="btn-mainmenu" class="menu-btn secondary">MAIN MENU</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

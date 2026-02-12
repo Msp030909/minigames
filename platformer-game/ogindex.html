@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Platformer Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #1a1a1a;
+            font-family: Arial, sans-serif;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
+            border: 3px solid #333;
+            overflow: hidden;
+        }
+
+        .player {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background-color: #FF6B6B;
+            border-radius: 4px;
+            /* Sprite states (uncomment to use sprites instead):
+               background-image: url('player-idle.png');
+               background-size: contain;
+               background-repeat: no-repeat;
+            */
+        }
+
+        .platform {
+            position: absolute;
+            background-color: #8B4513;
+            border: 2px solid #654321;
+            /* For sprites, uncomment:
+               background-image: url('platform.png');
+               background-size: cover;
+            */
+        }
+
+        .enemy {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+        }
+
+        .goomba {
+            background-color: #8B4513;
+            /* Sprite: background-image: url('goomba-walk.png'); */
+        }
+
+        .patrol-enemy {
+            background-color: #4CAF50;
+            /* Sprite: background-image: url('patrol-enemy-walk.png'); */
+        }
+
+        .flagpole {
+            position: absolute;
+            width: 16px;
+            height: 80px;
+            background: linear-gradient(90deg, #DAA520 0%, #B8860B 100%);
+            /* Sprite: background-image: url('flagpole.png'); */
+        }
+
+        .flag {
+            position: absolute;
+            width: 32px;
+            height: 24px;
+            background-color: #FF1493;
+            border-radius: 4px;
+            top: -20px;
+            right: -20px;
+            /* Sprite: background-image: url('flag.png'); */
+        }
+
+        #uiContainer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #333;
+            font-size: 16px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        #levelText {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer"></div>
+    <div id="uiContainer">
+        <div id="levelText">Level 1</div>
+        <div>Controls: A/D to move, SPACE to jump</div>
+    </div>
+
+    <script>
+        // ============================================================================
+        // GAME CONFIG & CONSTANTS
+        // ============================================================================
+        const GRAVITY = 0.6;
+        const JUMP_STRENGTH = -12;
+        const MOVE_SPEED = 5;
+        const JUMP_GRACE_PERIOD = 0.15; // seconds
+        const MAX_FALL_SPEED = 15;
+
+        // ============================================================================
+        // PLAYER CLASS
+        // ============================================================================
+        class Player {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.width = 32;
+                this.height = 32;
+                this.velocityX = 0;
+                this.velocityY = 0;
+                this.isGrounded = false;
+                this.graceTimer = 0;
+                this.isFacingRight = true;
+                this.isDead = false;
+            }
+
+            update(input, platforms, enemies) {
+                // Horizontal movement
+                this.velocityX = 0;
+                if (input.left) {
+                    this.velocityX = -MOVE_SPEED;
+                    this.isFacingRight = false;
+                }
+                if (input.right) {
+                    this.velocityX = MOVE_SPEED;
+                    this.isFacingRight = true;
+                }
+
+                // Apply gravity
+                this.velocityY += GRAVITY;
+                if (this.velocityY > MAX_FALL_SPEED) {
+                    this.velocityY = MAX_FALL_SPEED;
+                }
+
+                // Jumping with grace period
+                this.graceTimer -= 1 / 60; // Assuming 60 FPS
+                if (input.jump && this.graceTimer > 0) {
+                    this.velocityY = JUMP_STRENGTH;
+                    this.graceTimer = 0;
+                    input.jump = false; // Consume jump input
+                }
+
+                // Update position
+                this.x += this.velocityX;
+                this.y += this.velocityY;
+
+                // Collision with platforms
+                this.isGrounded = false;
+                for (let platform of platforms) {
+                    if (this.isColliding(platform)) {
+                        // Landing on top of platform
+                        if (this.velocityY > 0 && this.y + this.height - this.velocityY <= platform.y + platform.height / 2) {
+                            this.y = platform.y - this.height;
+                            this.velocityY = 0;
+                            this.isGrounded = true;
+                            this.graceTimer = JUMP_GRACE_PERIOD;
+                        }
+                        // Hitting bottom of platform
+                        else if (this.velocityY < 0 && this.y + this.height - this.velocityY >= platform.y + platform.height / 2) {
+                            this.velocityY = 0;
+                            this.y = platform.y + platform.height;
+                        }
+                        // Side collision
+                        else {
+                            if (this.velocityX > 0) {
+                                this.x = platform.x - this.width;
+                            } else if (this.velocityX < 0) {
+                                this.x = platform.x + platform.width;
+                            }
+                            this.velocityX = 0;
+                        }
+                    }
+                }
+
+                // Check collision with enemies
+                for (let enemy of enemies) {
+                    if (this.isColliding(enemy)) {
+                        // Hit enemy from above
+                        if (this.velocityY > 0 && this.y + this.height - this.velocityY <= enemy.y + enemy.height / 2) {
+                            enemy.die();
+                            this.velocityY = JUMP_STRENGTH; // Bounce
+                        } else {
+                            this.die();
+                        }
+                    }
+                }
+
+                // Screen boundaries
+                if (this.x < 0) this.x = 0;
+                if (this.x + this.width > 800) this.x = 800 - this.width;
+
+                // Fall off screen
+                if (this.y > 600) {
+                    this.die();
+                }
+            }
+
+            isColliding(obj) {
+                return this.x < obj.x + obj.width &&
+                       this.x + this.width > obj.x &&
+                       this.y < obj.y + obj.height &&
+                       this.y + this.height > obj.y;
+            }
+
+            die() {
+                this.isDead = true;
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = '#FF6B6B';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+
+                // Optional: Draw eyes to show direction
+                ctx.fillStyle = '#000';
+                if (this.isFacingRight) {
+                    ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
+                } else {
+                    ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
+                }
+
+                /* Sprite rendering (uncomment to use):
+                   const spriteState = this.velocityY < 0 ? 'jump' : 
+                                      this.velocityX !== 0 ? 'move' : 'idle';
+                   ctx.save();
+                   if (!this.isFacingRight) ctx.scale(-1, 1);
+                   ctx.drawImage(playerSprites[spriteState], this.x, this.y, this.width, this.height);
+                   ctx.restore();
+                */
+            }
+        }
+
+        // ============================================================================
+        // PLATFORM CLASS
+        // ============================================================================
+        class Platform {
+            constructor(x, y, width, height) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                ctx.strokeStyle = '#654321';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(this.x, this.y, this.width, this.height);
+
+                /* Sprite rendering (uncomment to use):
+                   ctx.drawImage(platformSprite, this.x, this.y, this.width, this.height);
+                */
+            }
+        }
+
+        // ============================================================================
+        // GOOMBA ENEMY CLASS - walks forward, dies when hit on head
+        // ============================================================================
+        class GoombEnemy {
+            constructor(x, y, direction = 1, platforms = []) {
+                this.x = x;
+                this.y = y;
+                this.width = 32;
+                this.height = 32;
+                this.velocityX = MOVE_SPEED * direction; // 1 = right, -1 = left
+                this.velocityY = 0;
+                this.direction = direction;
+                this.isDead = false;
+                this.platforms = platforms;
+            }
+
+            update(platforms) {
+                // Apply gravity
+                this.velocityY += GRAVITY;
+                if (this.velocityY > MAX_FALL_SPEED) {
+                    this.velocityY = MAX_FALL_SPEED;
+                }
+
+                // Update position
+                this.x += this.velocityX;
+                this.y += this.velocityY;
+
+                // Collision with platforms
+                let onGround = false;
+                for (let platform of platforms) {
+                    if (this.isColliding(platform)) {
+                        // Landing on platform
+                        if (this.velocityY > 0 && this.y + this.height - this.velocityY <= platform.y + platform.height / 2) {
+                            this.y = platform.y - this.height;
+                            this.velocityY = 0;
+                            onGround = true;
+                        }
+                        // Side collision - reverse direction
+                        else if (this.velocityX > 0) {
+                            this.velocityX = -MOVE_SPEED;
+                            this.direction = -1;
+                        } else if (this.velocityX < 0) {
+                            this.velocityX = MOVE_SPEED;
+                            this.direction = 1;
+                        }
+                    }
+                }
+
+                // Fall off screen
+                if (this.y > 600) {
+                    this.isDead = true;
+                }
+            }
+
+            isColliding(obj) {
+                return this.x < obj.x + obj.width &&
+                       this.x + this.width > obj.x &&
+                       this.y < obj.y + obj.height &&
+                       this.y + this.height > obj.y;
+            }
+
+            die() {
+                this.isDead = true;
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+
+                // Draw eyes
+                ctx.fillStyle = '#000';
+                if (this.direction === 1) {
+                    ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
+                } else {
+                    ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
+                }
+
+                /* Sprite rendering (uncomment to use):
+                   ctx.save();
+                   if (this.direction === -1) ctx.scale(-1, 1);
+                   ctx.drawImage(goombaWalkSprite, this.x, this.y, this.width, this.height);
+                   ctx.restore();
+                */
+            }
+        }
+
+        // ============================================================================
+        // PATROL ENEMY CLASS - walks to edge and back
+        // ============================================================================
+        class PatrolEnemy {
+            constructor(x, y, platform, direction = 1) {
+                this.x = x;
+                this.y = y;
+                this.width = 32;
+                this.height = 32;
+                this.velocityX = MOVE_SPEED * direction;
+                this.velocityY = 0;
+                this.direction = direction;
+                this.isDead = false;
+                this.platform = platform;
+            }
+
+            update() {
+                // Apply gravity
+                this.velocityY += GRAVITY;
+                if (this.velocityY > MAX_FALL_SPEED) {
+                    this.velocityY = MAX_FALL_SPEED;
+                }
+
+                // Update position
+                this.x += this.velocityX;
+                this.y += this.velocityY;
+
+                // Keep on platform
+                if (this.isColliding(this.platform)) {
+                    if (this.velocityY > 0) {
+                        this.y = this.platform.y - this.height;
+                        this.velocityY = 0;
+                    }
+                }
+
+                // Check if at edge and reverse direction
+                const platformLeft = this.platform.x;
+                const platformRight = this.platform.x + this.platform.width;
+                const enemyCenter = this.x + this.width / 2;
+
+                if ((this.direction === 1 && enemyCenter >= platformRight - 5) ||
+                    (this.direction === -1 && enemyCenter <= platformLeft + 5)) {
+                    this.velocityX *= -1;
+                    this.direction *= -1;
+                }
+
+                // Fall off screen
+                if (this.y > 600) {
+                    this.isDead = true;
+                }
+            }
+
+            isColliding(obj) {
+                return this.x < obj.x + obj.width &&
+                       this.x + this.width > obj.x &&
+                       this.y < obj.y + obj.height &&
+                       this.y + this.height > obj.y;
+            }
+
+            die() {
+                this.isDead = true;
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = '#4CAF50';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+
+                // Draw eyes
+                ctx.fillStyle = '#000';
+                if (this.direction === 1) {
+                    ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
+                } else {
+                    ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
+                }
+
+                /* Sprite rendering (uncomment to use):
+                   ctx.save();
+                   if (this.direction === -1) ctx.scale(-1, 1);
+                   ctx.drawImage(patrolEnemyWalkSprite, this.x, this.y, this.width, this.height);
+                   ctx.restore();
+                */
+            }
+        }
+
+        // ============================================================================
+        // FLAGPOLE CLASS
+        // ============================================================================
+        class Flagpole {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.width = 16;
+                this.height = 80;
+            }
+
+            isColliding(obj) {
+                return obj.x < this.x + this.width &&
+                       obj.x + obj.width > this.x &&
+                       obj.y < this.y + this.height &&
+                       obj.y + obj.height > this.y;
+            }
+
+            draw(ctx) {
+                // Pole
+                ctx.fillStyle = '#DAA520';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+
+                // Flag
+                ctx.fillStyle = '#FF1493';
+                ctx.fillRect(this.x + this.width, this.y, 32, 24);
+
+                /* Sprite rendering (uncomment to use):
+                   ctx.drawImage(flagpoleSprite, this.x, this.y, this.width, this.height);
+                   ctx.drawImage(flagSprite, this.x + this.width, this.y, 32, 24);
+                */
+            }
+        }
+
+        // ============================================================================
+        // LEVEL CLASS
+        // ============================================================================
+        class Level {
+            constructor(levelNumber, platforms = [], enemies = [], flagpole = null, nextLevel = null) {
+                this.levelNumber = levelNumber;
+                this.platforms = platforms;
+                this.enemies = enemies;
+                this.flagpole = flagpole;
+                this.nextLevel = nextLevel;
+            }
+
+            draw(ctx) {
+                for (let platform of this.platforms) {
+                    platform.draw(ctx);
+                }
+                for (let enemy of this.enemies) {
+                    if (!enemy.isDead) {
+                        enemy.draw(ctx);
+                    }
+                }
+                if (this.flagpole) {
+                    this.flagpole.draw(ctx);
+                }
+            }
+
+            update(input, player) {
+                for (let enemy of this.enemies) {
+                    if (!enemy.isDead) {
+                        enemy.update(this.platforms);
+                    }
+                }
+                this.enemies = this.enemies.filter(e => !e.isDead);
+                player.update(input, this.platforms, this.enemies);
+            }
+        }
+
+        // ============================================================================
+        // GAME MANAGER
+        // ============================================================================
+        class Game {
+            constructor() {
+                this.currentLevelNumber = 1;
+                this.levels = this.createLevels();
+                this.currentLevel = this.levels[this.currentLevelNumber];
+                this.player = new Player(50, 450);
+                this.gameOver = false;
+                this.won = false;
+                this.input = {
+                    left: false,
+                    right: false,
+                    jump: false
+                };
+                this.setupInputHandlers();
+            }
+
+            createLevels() {
+                const levels = {};
+
+                // ================================================================
+                // LEVEL 1
+                // ================================================================
+                const level1Platforms = [
+                    new Platform(0, 550, 800, 50),      // Ground
+                    new Platform(150, 450, 150, 30),    // Platform 1
+                    new Platform(450, 400, 150, 30),    // Platform 2
+                    new Platform(250, 300, 150, 30),    // Platform 3
+                    new Platform(550, 250, 150, 30),    // Platform 4
+                ];
+
+                const level1Enemies = [
+                    new GoombEnemy(200, 410, 1, level1Platforms),  // Walking right
+                    new PatrolEnemy(500, 360, level1Platforms[2], -1), // Patrolling on platform 3
+                ];
+
+                const level1Flagpole = new Flagpole(720, 470);
+
+                levels[1] = new Level(1, level1Platforms, level1Enemies, level1Flagpole, 2);
+
+                // ================================================================
+                // LEVEL 2
+                // ================================================================
+                const level2Platforms = [
+                    new Platform(0, 550, 800, 50),      // Ground
+                    new Platform(100, 480, 120, 30),    // Platform 1
+                    new Platform(350, 430, 120, 30),    // Platform 2
+                    new Platform(200, 350, 120, 30),    // Platform 3
+                    new Platform(500, 320, 120, 30),    // Platform 4
+                    new Platform(350, 230, 120, 30),    // Platform 5
+                ];
+
+                const level2Enemies = [
+                    new GoombEnemy(150, 440, 1, level2Platforms),
+                    new GoombEnemy(400, 390, -1, level2Platforms),
+                    new PatrolEnemy(250, 310, level2Platforms[3], 1),
+                ];
+
+                const level2Flagpole = new Flagpole(720, 470);
+
+                levels[2] = new Level(2, level2Platforms, level2Enemies, level2Flagpole, null);
+
+                return levels;
+            }
+
+            setupInputHandlers() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'a' || e.key === 'A') this.input.left = true;
+                    if (e.key === 'd' || e.key === 'D') this.input.right = true;
+                    if (e.key === ' ') {
+                        this.input.jump = true;
+                        e.preventDefault();
+                    }
+                });
+
+                document.addEventListener('keyup', (e) => {
+                    if (e.key === 'a' || e.key === 'A') this.input.left = false;
+                    if (e.key === 'd' || e.key === 'D') this.input.right = false;
+                });
+            }
+
+            update() {
+                if (this.gameOver || this.won) return;
+
+                this.currentLevel.update(this.input, this.player);
+
+                if (this.player.isDead) {
+                    this.gameOver = true;
+                    alert(`Game Over! You died on Level ${this.currentLevelNumber}\nRefresh to restart.`);
+                    return;
+                }
+
+                // Check for flagpole collision
+                if (this.currentLevel.flagpole && this.currentLevel.flagpole.isColliding(this.player)) {
+                    if (this.currentLevel.nextLevel) {
+                        this.nextLevel();
+                    } else {
+                        this.won = true;
+                        alert(`You won! Congratulations!\nRefresh to restart.`);
+                    }
+                }
+            }
+
+            nextLevel() {
+                this.currentLevelNumber++;
+                if (this.levels[this.currentLevelNumber]) {
+                    this.currentLevel = this.levels[this.currentLevelNumber];
+                    this.player = new Player(50, 450);
+                    document.getElementById('levelText').textContent = `Level ${this.currentLevelNumber}`;
+                } else {
+                    this.won = true;
+                    alert('All levels completed!');
+                }
+            }
+
+            draw(ctx) {
+                // Clear canvas
+                ctx.fillStyle = 'rgba(135, 206, 235, 1)';
+                ctx.fillRect(0, 0, 800, 600);
+
+                // Draw level
+                this.currentLevel.draw(ctx);
+                this.player.draw(ctx);
+            }
+        }
+
+        // ============================================================================
+        // GAME LOOP
+        // ============================================================================
+        const container = document.getElementById('gameContainer');
+        const canvas = document.createElement('canvas');
+        canvas.width = 800;
+        canvas.height = 600;
+        canvas.style.display = 'block';
+        container.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        const game = new Game();
+
+        function gameLoop() {
+            game.update();
+            game.draw(ctx);
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+
+        // ============================================================================
+        // NOTES FOR CUSTOMIZATION
+        // ============================================================================
+        /*
+        TO ADD A NEW LEVEL:
+        1. In createLevels(), add a new section for your level
+        2. Create platform array with new Platform(x, y, width, height) objects
+        3. Create enemies array with new GoombEnemy() and/or new PatrolEnemy() objects
+        4. Create a flagpole with new Flagpole(x, y)
+        5. Create the level: levels[levelNumber] = new Level(levelNumber, platforms, enemies, flagpole, nextLevel)
+        6. For the last level, set nextLevel to null
+
+        TO MODIFY AN EXISTING LEVEL:
+        - Change platform positions/sizes in their constructor calls
+        - Move enemies by changing their x, y values
+        - Change enemy types or add new ones
+        - Move the flagpole by changing its x, y values
+
+        TO ADD SPRITE ASSETS:
+        1. Create image objects for each sprite at the top of the script
+        2. Uncomment the sprite rendering code in draw() methods
+        3. Comment out the fillRect() color fills
+
+        TO ADJUST DIFFICULTY:
+        - Change MOVE_SPEED to make enemies/player faster
+        - Change GRAVITY to make jumping feel different
+        - Change JUMP_STRENGTH to make jumps higher/lower
+        - Adjust JUMP_GRACE_PERIOD to make jumping more/less forgiving
+        */
+    </script>
+</body>
+</html>

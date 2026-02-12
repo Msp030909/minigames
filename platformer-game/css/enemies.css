@@ -1,0 +1,16 @@
+.enemy {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+}
+
+.goomba {
+    background-color: #8B4513;
+    /* Sprite: background-image: url('goomba-walk.png'); */
+}
+
+.patrol-enemy {
+    background-color: #4CAF50;
+    /* Sprite: background-image: url('patrol-enemy-walk.png'); */
+}

@@ -1,0 +1,9 @@
+.platform {
+    position: absolute;
+    background-color: #8B4513;
+    border: 2px solid #654321;
+    /* For sprites, uncomment:
+       background-image: url('platform.png');
+       background-size: cover;
+    */
+}
