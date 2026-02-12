@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBZ Clicker - Ultimate Training</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <h1 class="site-title">Minigame Page</h1>
+            <nav class="nav">
+                <a href="../index.html">Home</a>
+                <a href="#skills">Portfolio</a>
+                <a href="#projects">Projects</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+    <div id="game-container">
+        <!-- Left Sidebar: Click Upgrades -->
+        <aside class="sidebar" id="click-upgrades">
+            <h3>Training (Click)</h3>
+            <!-- Buttons dynamically generated -->
+        </aside>
+
+        <!-- Main Center Area -->
+        <main id="main-area">
+            <div id="stats-panel">
+                <div class="main-currency"><span id="zeni-count">0</span> Zeni</div>
+                <div class="sub-stats">
+                    <span>Power Level: <span id="zeni-per-second">0</span>/s</span> | 
+                    <span>Training Gain: <span id="zeni-per-click">0</span>/click</span>
+                </div>
+            </div>
+
+            <div id="main-character-container">
+                <div id="main-character">
+                    <!-- This represents the character/object -->
+                </div>
+                <div id="transformation-name">Base Form</div>
+            </div>
+
+            <div id="rebirth-section">
+                <h4>Rebirth Power</h4>
+                <div>Points: <span id="rebirth-points">0</span></div>
+                <div>Multiplier: x<span id="rebirth-multiplier">1.0</span></div>
+                <div>Potential gain: <span id="potential-rebirth">0</span></div>
+                <button id="rebirth-btn">REBIRTH</button>
+            </div>
+        </main>
+
+        <!-- Right Sidebar: Auto Upgrades -->
+        <aside class="sidebar" id="auto-upgrades">
+            <h3>Auto Training</h3>
+            <!-- Buttons dynamically generated -->
+        </aside>
+    </div>
+
+    <script type="module" src="js/game.js"></script>
+</body>
+</html>

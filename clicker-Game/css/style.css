@@ -1,0 +1,232 @@
+:root {
+    --dbz-orange: #f39c12;
+    --dbz-blue: #2980b9;
+    --dbz-red: #c0392b;
+    --dbz-dark: #2c3e50;
+    --dbz-light: #ecf0f1;
+}
+
+/* Navbar styles */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 28px 20px;
+}
+
+.site-header {
+    backdrop-filter: blur(6px);
+    background: #252525;
+    border-bottom: 1px solid rgba(16, 24, 40, 0.04);
+    position: sticky;
+    top: 0;
+    z-index: 10000;
+    color: #e9f7eb;
+    font-family: monospace, ui-monospace, SF Mono, Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.site-title {
+    font-size: 18px;
+    margin: 0;
+    font-weight: 600;
+}
+
+.nav a {
+    color: #8d8d8d;
+    text-decoration: none;
+    margin-left: 18px;
+    font-weight: 500;
+}
+
+.nav a:hover {
+    color: #e9f7eb;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+    color: var(--dbz-light);
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+}
+
+#game-container {
+    display: grid;
+    grid-template-columns: 300px 1fr 300px;
+    height: 100vh;
+}
+
+/* Sidebars */
+.sidebar {
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 2px solid var(--dbz-orange);
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.sidebar h3 {
+    text-align: center;
+    color: var(--dbz-orange);
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--dbz-orange);
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+/* Main Area */
+#main-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding: 20px;
+    position: relative;
+}
+
+#stats-panel {
+    text-align: center;
+    background: rgba(0,0,0,0.5);
+    padding: 15px 40px;
+    border-radius: 15px;
+    border: 2px solid var(--dbz-blue);
+}
+
+.main-currency {
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--dbz-orange);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.sub-stats {
+    font-size: 1rem;
+    color: #bdc3c7;
+}
+
+/* The Clickable Character */
+#main-character-container {
+    perspective: 1000px;
+}
+
+#main-character {
+    width: 200px;
+    height: 200px;
+    background-color: #f1c40f;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 4px solid #fff;
+}
+
+#main-character:active {
+    transform: scale(0.95);
+}
+
+#transformation-name {
+    position: absolute;
+    bottom: -40px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* Upgrade Buttons */
+.upgrade-btn {
+    background: #34495e;
+    border: 2px solid var(--dbz-blue);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.upgrade-btn:hover:not(:disabled) {
+    background: #4b6584;
+    border-color: var(--dbz-orange);
+}
+
+.upgrade-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+.upgrade-info .name {
+    font-weight: bold;
+    color: var(--dbz-orange);
+    display: block;
+}
+
+.upgrade-info .desc {
+    font-size: 0.8rem;
+    color: #bdc3c7;
+}
+
+.upgrade-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 5px;
+}
+
+/* Floating Text */
+.floating-text {
+    position: absolute;
+    pointer-events: none;
+    color: var(--dbz-orange);
+    font-weight: bold;
+    font-size: 1.5rem;
+    animation: floatUp 1s ease-out forwards;
+    z-index: 100;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-100px); opacity: 0; }
+}
+
+/* Rebirth Section */
+#rebirth-section {
+    text-align: center;
+    background: rgba(192, 57, 43, 0.2);
+    border: 1px dashed var(--dbz-red);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#rebirth-btn {
+    background: var(--dbz-red);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#rebirth-btn:hover {
+    background: #e74c3c;
+}
