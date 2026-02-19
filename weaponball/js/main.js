@@ -38,6 +38,7 @@ const ui = {
   teamBallSelect: document.getElementById("team-ball-select"),
   teamChangeSelect: document.getElementById("team-change-select"),
   setTeamBtn: document.getElementById("set-team-btn"),
+  clearBallsBtn: document.getElementById("clear-balls-btn"),
 
   ballCount: document.getElementById("ball-count"),
   projectileCount: document.getElementById("projectile-count"),
@@ -254,6 +255,12 @@ function initControls() {
       return;
     }
     ball.team = ui.teamChangeSelect.value;
+    refreshBallPicker();
+  });
+
+  ui.clearBallsBtn.addEventListener("click", () => {
+    state.balls = [];
+    state.projectiles = [];
     refreshBallPicker();
   });
 

@@ -42,7 +42,8 @@ export const PRESET_DEFS = {
     name: "Sword Ball",
     weaponType: "sword",
     weaponMode: "melee",
-    color: "#6aa3ff"
+    color: "#6aa3ff",
+    weaponSize: basePreset.weaponSize * 1.5
   },
   superSword: {
     ...basePreset,
@@ -50,8 +51,9 @@ export const PRESET_DEFS = {
     name: "Super Sword Ball",
     weaponType: "sword",
     weaponMode: "melee",
-    rpm: 2,
-    color: "#ff6464"
+    rpm: 40,
+    color: "#ff6464",
+    weaponSize: basePreset.weaponSize * 2
   },
   dagger: {
     ...basePreset,
@@ -59,7 +61,8 @@ export const PRESET_DEFS = {
     name: "Dagger Ball",
     weaponType: "dagger",
     weaponMode: "melee",
-    color: "#02fc02"
+    color: "#02fc02",
+    weaponSize: basePreset.weaponSize * 0.8
   },
   superDagger: {
     ...basePreset,
@@ -67,7 +70,7 @@ export const PRESET_DEFS = {
     name: "Super Dagger Ball",
     weaponType: "dagger",
     weaponMode: "melee",
-    weaponSize: basePreset.weaponSize * 5,
+    weaponSize: basePreset.weaponSize * 1.6,
     color: "#02fc02"
   },
   bow: {
@@ -79,7 +82,7 @@ export const PRESET_DEFS = {
     arrowCount: 1,
     damage: 11,
     color: "#dca86e",
-    rpm: 3
+    rpm: 7
   },
   superBow: {
     ...basePreset,
