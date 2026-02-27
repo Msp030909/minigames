@@ -1,5 +1,5 @@
 import { GAME_CONFIG } from "./config.js";
-import { distanceSquared, randomDirection, randomRange } from "./utils.js";
+import { clamp, distanceSquared, randomDirection, randomRange } from "./utils.js";
 
 let nextBallId = 1;
 
@@ -22,7 +22,15 @@ export class Ball {
     this.rpm = Number(options.rpm ?? 1);
     this.damage = Number(options.damage ?? 14);
     this.weaponSize = Number(options.weaponSize ?? 10);
-    this.arrowCount = Number(options.arrowCount ?? 1);
+    const startingArrowCount = Number(options.arrowCount ?? 1);
+    const inferredBowLimit =
+      this.weaponType === "bow"
+        ? startingArrowCount > 1
+          ? GAME_CONFIG.superBowMaxArrowCount
+          : GAME_CONFIG.bowMaxArrowCount
+        : GAME_CONFIG.defaultMaxArrowCount;
+    this.maxArrowCount = Number(options.maxArrowCount ?? inferredBowLimit);
+    this.arrowCount = clamp(startingArrowCount, 1, this.maxArrowCount);
     this.acceleration = Number(options.acceleration ?? 220);
     this.maxSpeed = Number(options.maxSpeed ?? 190);
     this.gravityAffected = options.gravityAffected ?? true;

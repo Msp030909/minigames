@@ -43,7 +43,7 @@ function applyOnHit(attacker) {
       attacker.rpm += 1;
       break;
     case "bow":
-      attacker.arrowCount += 1;
+      attacker.arrowCount = Math.min(attacker.maxArrowCount, attacker.arrowCount + 1);
       break;
     case "unarmed":
       attacker.maxSpeed += 10;
@@ -51,6 +51,24 @@ function applyOnHit(attacker) {
     default:
       break;
   }
+}
+
+function applyDirectionalKnockback(target, sourceX, sourceY, strength) {
+  const dx = target.x - sourceX;
+  const dy = target.y - sourceY;
+  const magnitude = Math.hypot(dx, dy) || 0.0001;
+  const nx = dx / magnitude;
+  const ny = dy / magnitude;
+  target.vx += nx * strength;
+  target.vy += ny * strength;
+}
+
+function applyVelocityKnockback(target, vx, vy, strength) {
+  const magnitude = Math.hypot(vx, vy) || 0.0001;
+  const nx = vx / magnitude;
+  const ny = vy / magnitude;
+  target.vx += nx * strength;
+  target.vy += ny * strength;
 }
 
 function trySpawnProjectile(attacker, projectiles) {
@@ -61,7 +79,10 @@ function trySpawnProjectile(attacker, projectiles) {
     return;
   }
 
-  const shotCount = Math.max(1, Math.floor(attacker.arrowCount));
+  const shotCount = Math.max(
+    1,
+    Math.min(Math.floor(attacker.arrowCount), Math.floor(attacker.maxArrowCount))
+  );
   const angleSpread = shotCount > 1 ? 0.08 : 0;
   const centerOffset = (shotCount - 1) / 2;
   const wp = attacker.weaponPosition();
@@ -141,6 +162,7 @@ export function handleCombat(state, dt, nowSeconds) {
         if (landed) {
           a.lockDamage(b.id, nowSeconds);
           applyOnHit(a);
+          applyDirectionalKnockback(b, a.x, a.y, GAME_CONFIG.hitKnockback);
         }
       }
 
@@ -150,6 +172,7 @@ export function handleCombat(state, dt, nowSeconds) {
         if (landed) {
           b.lockDamage(a.id, nowSeconds);
           applyOnHit(b);
+          applyDirectionalKnockback(a, b.x, b.y, GAME_CONFIG.hitKnockback);
         }
       }
     }
@@ -197,9 +220,17 @@ export function handleCombat(state, dt, nowSeconds) {
         continue;
       }
       if (projectile.checkBallHit(ball)) {
-        ball.applyDamage(projectile.damage, nowSeconds);
+        const landed = ball.applyDamage(projectile.damage, nowSeconds);
         projectile.active = false;
-        if (owner.alive) {
+        if (landed) {
+          applyVelocityKnockback(
+            ball,
+            projectile.vx,
+            projectile.vy,
+            GAME_CONFIG.projectileKnockback
+          );
+        }
+        if (owner.alive && landed) {
           applyOnHit(owner);
         }
         break;

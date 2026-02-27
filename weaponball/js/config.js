@@ -4,6 +4,11 @@ export const GAME_CONFIG = {
   bodyContactDamage: 12,
   projectileSpeed: 420,
   projectileLife: 3.2,
+  defaultMaxArrowCount: 10,
+  bowMaxArrowCount: 10,
+  superBowMaxArrowCount: 20,
+  hitKnockback: 85,
+  projectileKnockback: 110,
   arenaWidth: 900,
   arenaHeight: 560,
   middleWallEnabled: true,
@@ -80,6 +85,7 @@ export const PRESET_DEFS = {
     weaponType: "bow",
     weaponMode: "projectile",
     arrowCount: 1,
+    maxArrowCount: GAME_CONFIG.bowMaxArrowCount,
     damage: 11,
     color: "#dca86e",
     rpm: 7
@@ -91,6 +97,7 @@ export const PRESET_DEFS = {
     weaponType: "bow",
     weaponMode: "projectile",
     arrowCount: 2,
+    maxArrowCount: GAME_CONFIG.superBowMaxArrowCount,
     damage: 11,
     color: "#f3c492",
     rpm: 10
