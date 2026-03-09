@@ -107,7 +107,9 @@ function trySpawnProjectile(attacker, projectiles) {
   }
 
   const fireRate = Math.max(0.2, attacker.rpm);
-  attacker.projectileCooldown = 60 / (fireRate * Math.max(1, shotCount));
+  const baseCooldown = 60 / fireRate;
+  const decayedCooldown = baseCooldown * Math.pow(attacker.cooldownDecay, shotCount - 1);
+  attacker.projectileCooldown = Math.max(attacker.minCooldown, decayedCooldown);
 }
 
 export function handleCombat(state, dt, nowSeconds) {

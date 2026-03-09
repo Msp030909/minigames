@@ -4,9 +4,13 @@ export const GAME_CONFIG = {
   bodyContactDamage: 12,
   projectileSpeed: 420,
   projectileLife: 3.2,
-  defaultMaxArrowCount: 10,
-  bowMaxArrowCount: 10,
-  superBowMaxArrowCount: 20,
+  defaultMaxArrowCount: 5,
+  bowMaxArrowCount: 1,
+  superBowMaxArrowCount: 2,
+  bowCooldownDecay: 0.95,
+  superBowCooldownDecay: 0.95,
+  bowMinCooldown: 0.4,
+  superBowMinCooldown: 0.25,
   hitKnockback: 85,
   projectileKnockback: 110,
   arenaWidth: 900,
@@ -86,9 +90,11 @@ export const PRESET_DEFS = {
     weaponMode: "projectile",
     arrowCount: 1,
     maxArrowCount: GAME_CONFIG.bowMaxArrowCount,
+    cooldownDecay: GAME_CONFIG.bowCooldownDecay,
+    minCooldown: GAME_CONFIG.bowMinCooldown,
     damage: 11,
     color: "#dca86e",
-    rpm: 7
+    rpm: 25
   },
   superBow: {
     ...basePreset,
@@ -98,9 +104,11 @@ export const PRESET_DEFS = {
     weaponMode: "projectile",
     arrowCount: 2,
     maxArrowCount: GAME_CONFIG.superBowMaxArrowCount,
+    cooldownDecay: GAME_CONFIG.superBowCooldownDecay,
+    minCooldown: GAME_CONFIG.superBowMinCooldown,
     damage: 11,
     color: "#f3c492",
-    rpm: 10
+    rpm: 25
   },
   unarmed: {
     ...basePreset,

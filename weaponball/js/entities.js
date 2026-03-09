@@ -31,6 +31,8 @@ export class Ball {
         : GAME_CONFIG.defaultMaxArrowCount;
     this.maxArrowCount = Number(options.maxArrowCount ?? inferredBowLimit);
     this.arrowCount = clamp(startingArrowCount, 1, this.maxArrowCount);
+    this.cooldownDecay = Number(options.cooldownDecay ?? 1);
+    this.minCooldown = Number(options.minCooldown ?? 0);
     this.acceleration = Number(options.acceleration ?? 220);
     this.maxSpeed = Number(options.maxSpeed ?? 190);
     this.gravityAffected = options.gravityAffected ?? true;
